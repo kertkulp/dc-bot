@@ -1,8 +1,9 @@
 import discord
 import asyncio
 from discord.ext import commands
+import config as cfg
 
-TOKEN = 'NDkzNzkzODU2MDczMTA1NDA5.DoqJLg.K1HBokXEM-PYAy185GDLdMgjiJE'
+TOKEN = cfg.token
 
 client = commands.Bot(command_prefix = '!')
 
