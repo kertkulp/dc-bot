@@ -44,8 +44,9 @@ async def on_message(message):
         return
 
     if message.author.id != client.user.id:
-        time_now = datetime.now().time()
-        #print(time_now)
+        t = datetime.now().time()
+        time_now =  (t.hour * 60 + t.minute) * 60 + t.second
+        print(time_now)
      
         authors.append(
             [
@@ -81,6 +82,30 @@ async def on_message(message):
             await client.send_message(channel, warning_message)
         
         if(matched_messages == 10) and (message.author.id not in banned_users):
-            print()
+            #ban function here
+            print('test1')
 
+        time_match = 0
+        
+
+        for index, i in enumerate(authors):
+            if(i[0] > time_now - 20):
+                time_match += 1
+                if(time_match == 3) and (message.author.id not in warned_users):
+                    warned_users.append(message.author.id)
+                    await client.send_message(channel, warning_message)
+                elif(time_match == 5):
+                    if(message.author.id not in banned_users):
+                        #ban function here
+                        print('test2')
+            elif(i[0] < time_now - 20):
+                try:
+                    del i
+                    del warned_users[index]
+                    del banned_users[index]
+                except Exception:
+                    pass
+            if(len(messages) >= 200):
+                messages.pop([0])     
+               
 client.run(TOKEN)
