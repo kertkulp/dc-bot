@@ -8,6 +8,7 @@ import math
 TOKEN = cfg.token
 
 client = commands.Bot(command_prefix = '!')
+server = discord.Server(id='480289155138584576')
 
 authors = []
 messages = []
@@ -82,7 +83,7 @@ async def on_message(message):
             await client.send_message(channel, warning_message)
         
         if(matched_messages == 10) and (message.author.id not in banned_users):
-            #ban function here
+            await client.ban(message.author, 1)
             print('test1')
 
         time_match = 0
@@ -96,7 +97,7 @@ async def on_message(message):
                     await client.send_message(channel, warning_message)
                 elif(time_match == 5):
                     if(message.author.id not in banned_users):
-                        #ban function here
+                        await client.ban(message.author, 1)
                         print('test2')
             elif(i[0] < time_now - 20):
                 try:
@@ -107,5 +108,20 @@ async def on_message(message):
                     pass
             if(len(messages) >= 200):
                 messages.pop([0])     
-               
+
+'''def ban(message, userid):
+    for i in messages:
+        if(i[1] == message.author.id):
+            del i
+    
+    banned_users.append(message.author.id)
+   
+    ban(Server.get_member(message.author.id), delete_message_days=1)
+   
+'''
+    
+
+    
+
+
 client.run(TOKEN)
