@@ -5,6 +5,7 @@ from discord.ext import commands
 import config as cfg
 from datetime import datetime
 import math
+from lists import *
 
 TOKEN = cfg.token
 
@@ -53,6 +54,7 @@ async def on_member_remove(member):
 
 @client.event
 async def on_message(message):
+    #############Spam Filter
     channel = discord.Object(id='480289155138584578')
     warning_message = '{0} stop spamming or you will be banned!'.format(message.author.mention)
     if message.author == client.user:
@@ -120,6 +122,47 @@ async def on_message(message):
                     pass
             if(len(messages) >= 200):
                 messages.pop([0])     
+    #############Sound/pic commands
+    if str(message.content) in str(f_pic_name_list()):
+        msg = (str(message.content)).format(message)
+        await client.send_file(message.channel, "pics/"+str(message.content)[1:]+".jpg")
+    if str(message.content) in str(f_sound_name_list()):
+        voice_channel = message.author.voice_channel
+        if voice_channel is not None:
+            voice = await client.join_voice_channel(voice_channel)
+            try:
+                player = voice.create_ffmpeg_player("audio/"+str(message.content)[1:]+".wav")
+                player.start()
+                while player.is_playing():
+                    pass
+                await voice.disconnect()
+            except discord.ClientException:
+                await voice.disconnect()
+
+    if message.content.startswith('!help'):
+        embed = discord.Embed(title="Sem-bot", description="Bot is here to entertain you", color=0x00ff00)
+        embed.add_field(name="!pics", value="Displays all the picture commands", inline=False)
+        embed.add_field(name="!audio", value="Displays all the audio commands", inline=False)
+        embed.add_field(name="!player", value="Displays all the media player commands", inline=False)
+        await client.send_message(message.channel, embed=embed)
+
+    if message.content.startswith('!player'):
+        embed = discord.Embed(title="Youtube player", description="Make sure you're in a voice channel!", color=0xFF00C1)
+        embed.add_field(name="!play [url]", value="Audio from your video will start playing", inline=False)
+        embed.add_field(name="!stop", value="Stops the current song", inline=False)
+        embed.add_field(name="!pause", value="Pauses the current song", inline=False)
+        embed.add_field(name="!resume", value="Continues the current song", inline=False)
+        await client.send_message(message.channel, embed=embed)
+
+    if message.content.startswith('!pics'):
+        msg = (("All the picture commands are: "+", ".join(f_pic_name_list())).format(message))
+        await client.send_message(message.channel, msg)
+
+    if message.content.startswith('!sounds'):
+        msg = (("All the sound commands are: "+", ".join(f_sound_name_list())).format(message))
+        await client.send_message(message.channel, msg)
+    
+
     await client.process_commands(message) #magic line to make commands work after on_message
 @client.command(pass_context=True)
 async def join(ctx):
@@ -181,8 +224,4 @@ async def pause(ctx):
     players[id].pause()
 
     
-
-    
-
-
 client.run(TOKEN)
